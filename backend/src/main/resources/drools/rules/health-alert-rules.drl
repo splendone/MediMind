@@ -1,0 +1,150 @@
+package com.health.drools.rules
+
+import com.health.entity.HealthRecord
+import com.health.entity.HealthAlert
+
+/**
+ * 健康预警规则
+ */
+
+// 高血压预警
+rule "高血压预警 - 重度"
+    when
+        $record : HealthRecord(systolicPressure >= 180 || diastolicPressure >= 110)
+    then
+        HealthAlert alert = new HealthAlert();
+        alert.setUserId($record.getUserId());
+        alert.setHealthRecordId($record.getId());
+        alert.setAlertType("高血压");
+        alert.setAlertLevel(3);
+        alert.setIndicator("血压");
+        alert.setValue($record.getSystolicPressure() + "/" + $record.getDiastolicPressure());
+        alert.setThreshold("180/110");
+        alert.setMessage("您的血压严重偏高，建议立即就医！");
+        alert.setStatus(0);
+        insert(alert);
+end
+
+rule "高血压预警 - 中度"
+    when
+        $record : HealthRecord(systolicPressure >= 160 && systolicPressure < 180 ||
+                               diastolicPressure >= 100 && diastolicPressure < 110)
+    then
+        HealthAlert alert = new HealthAlert();
+        alert.setUserId($record.getUserId());
+        alert.setHealthRecordId($record.getId());
+        alert.setAlertType("高血压");
+        alert.setAlertLevel(2);
+        alert.setIndicator("血压");
+        alert.setValue($record.getSystolicPressure() + "/" + $record.getDiastolicPressure());
+        alert.setThreshold("160/100");
+        alert.setMessage("您的血压偏高，建议及时咨询医生。");
+        alert.setStatus(0);
+        insert(alert);
+end
+
+rule "高血压预警 - 轻度"
+    when
+        $record : HealthRecord(systolicPressure >= 140 && systolicPressure < 160 ||
+                               diastolicPressure >= 90 && diastolicPressure < 100)
+    then
+        HealthAlert alert = new HealthAlert();
+        alert.setUserId($record.getUserId());
+        alert.setHealthRecordId($record.getId());
+        alert.setAlertType("高血压");
+        alert.setAlertLevel(1);
+        alert.setIndicator("血压");
+        alert.setValue($record.getSystolicPressure() + "/" + $record.getDiastolicPressure());
+        alert.setThreshold("140/90");
+        alert.setMessage("您的血压略高，建议注意饮食和休息。");
+        alert.setStatus(0);
+        insert(alert);
+end
+
+// 低血压预警
+rule "低血压预警"
+    when
+        $record : HealthRecord(systolicPressure < 90 || diastolicPressure < 60)
+    then
+        HealthAlert alert = new HealthAlert();
+        alert.setUserId($record.getUserId());
+        alert.setHealthRecordId($record.getId());
+        alert.setAlertType("低血压");
+        alert.setAlertLevel(2);
+        alert.setIndicator("血压");
+        alert.setValue($record.getSystolicPressure() + "/" + $record.getDiastolicPressure());
+        alert.setThreshold("90/60");
+        alert.setMessage("您的血压偏低，如有不适请及时就医。");
+        alert.setStatus(0);
+        insert(alert);
+end
+
+// 心率异常预警
+rule "心率过快预警"
+    when
+        $record : HealthRecord(heartRate > 100)
+    then
+        HealthAlert alert = new HealthAlert();
+        alert.setUserId($record.getUserId());
+        alert.setHealthRecordId($record.getId());
+        alert.setAlertType("心率异常");
+        alert.setAlertLevel(2);
+        alert.setIndicator("心率");
+        alert.setValue($record.getHeartRate().toString());
+        alert.setThreshold("100");
+        alert.setMessage("您的心率偏快，建议注意休息。");
+        alert.setStatus(0);
+        insert(alert);
+end
+
+rule "心率过慢预警"
+    when
+        $record : HealthRecord(heartRate < 60)
+    then
+        HealthAlert alert = new HealthAlert();
+        alert.setUserId($record.getUserId());
+        alert.setHealthRecordId($record.getId());
+        alert.setAlertType("心率异常");
+        alert.setAlertLevel(2);
+        alert.setIndicator("心率");
+        alert.setValue($record.getHeartRate().toString());
+        alert.setThreshold("60");
+        alert.setMessage("您的心率偏慢，如有不适请咨询医生。");
+        alert.setStatus(0);
+        insert(alert);
+end
+
+// 血糖异常预警
+rule "高血糖预警"
+    when
+        $record : HealthRecord(bloodSugar >= 7.0)
+    then
+        HealthAlert alert = new HealthAlert();
+        alert.setUserId($record.getUserId());
+        alert.setHealthRecordId($record.getId());
+        alert.setAlertType("高血糖");
+        alert.setAlertLevel(3);
+        alert.setIndicator("血糖");
+        alert.setValue($record.getBloodSugar().toString());
+        alert.setThreshold("7.0");
+        alert.setMessage("您的血糖偏高，建议及时就医检查。");
+        alert.setStatus(0);
+        insert(alert);
+end
+
+rule "低血糖预警"
+    when
+        $record : HealthRecord(bloodSugar < 3.9)
+    then
+        HealthAlert alert = new HealthAlert();
+        alert.setUserId($record.getUserId());
+        alert.setHealthRecordId($record.getId());
+        alert.setAlertType("低血糖");
+        alert.setAlertLevel(3);
+        alert.setIndicator("血糖");
+        alert.setValue($record.getBloodSugar().toString());
+        alert.setThreshold("3.9");
+        alert.setMessage("您的血糖偏低，请及时补充糖分！");
+        alert.setStatus(0);
+        insert(alert);
+end
